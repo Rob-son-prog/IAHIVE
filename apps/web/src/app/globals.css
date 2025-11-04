@@ -1,0 +1,41 @@
+﻿@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ====== Tokens de Tema ====== */
+:root {
+  /* LIGHT (mantém) */
+  --background: #f7f7f8;
+  --foreground: #0b0b0e;
+
+  --card: #ffffff;
+  --card-foreground: #0b0b0e;
+
+  --border: #e5e7eb;   /* cinza claro */
+  --muted: #6b7280;    /* texto secundário */
+}
+
+/* DARK (look “chumbo” anterior, com borda mais forte) */
+.dark {
+  --background: #0b0b0d;   /* um pouco mais profundo que #0a0a0a */
+  --foreground: #f5f5f5;
+  --card: #0f1013;         /* cartões/boxes bem escuros */
+  --card-foreground: #f5f5f5;
+  --border: #2a2a30;       /* ~neutral-800 reforçado */
+  --muted: #b0b0b5;        /* cinza claro para textos secundários */
+}
+
+/* ====== Base ====== */
+@layer base {
+  /* aplica fundos/textos globais */
+  body { @apply bg-background text-foreground; }
+
+  /* usa nosso token como COR DE BORDA PADRÃO do app
+     (qualquer classe `border` sem cor específica vai herdar isto) */
+  *, ::before, ::after { border-color: var(--border); }
+}
+
+/* util opcional */
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+}

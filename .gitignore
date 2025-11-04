@@ -1,0 +1,23 @@
+﻿# gerais
+.DS_Store
+Thumbs.db
+*.log
+logs/
+
+# env (não subir segredos)
+**/.env
+**/.env.*
+!**/.env.example
+
+# node/next/turbo
+**/node_modules/
+**/.next/
+**/.turbo/
+**/dist/
+**/out/
+**/.vercel/
+
+# bancos locais
+**/prisma/*.db
+**/*.sqlite
+**/*.db-journal
