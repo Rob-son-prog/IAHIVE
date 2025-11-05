@@ -9,7 +9,7 @@
   const pct = Math.min(100, Math.round((usageThisMonth / monthlyGoal) * 100));
 
   return (
-    <div className="rounded-2xl border border-border bg-card p-4">
+    <div className="rounded-2xl border border-border bg-card elev-panel p-4">
       <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div>
           <p className="text-sm text-muted">Saldo disponível</p>
@@ -40,3 +40,4 @@
     </div>
   );
 }
+

@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import { Image as ImageIcon, Type as TypeIcon, Mic2, Clapperboard } from "lucide-react";
 import IABox from "../../components/portal/IABox";
 import CreditBar from "../../components/portal/CreditBar";
 import ThemeToggle from "../../components/portal/ThemeToggle";
@@ -24,16 +25,24 @@ export default function PortalHubPage() {
 
       {/* Grid de IAs */}
       <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <IABox title="Imagens" desc="Gere imagens incríveis com prompt." href="/portal/image" emoji="🖼️" />
-        <IABox title="Texto"   desc="Artigos, roteiros, posts e copies." href="/portal/text"  emoji="✍️" />
-        <IABox title="Áudio"   desc="Voz neural, TTS e narrações."      href="/portal/audio" emoji="🎙️" />
-        <IABox title="Vídeo"   desc="Clipes e storyboards com IA."      href="/portal/video" emoji="🎞️" />
+        <IABox title="Imagens" desc="Gere imagens incríveis com prompt." href="/portal/image" bgSrc="/portal/image-bg.svg"  icon={<ImageIcon className="w-6 h-6"  icon={<ImageIcon className="w-6 h-6" />} />} />
+        <IABox title="Texto"   desc="Artigos, roteiros, posts e copies." href="/portal/text"  bgSrc="/portal/text-bg.svg"  icon={<TypeIcon className="w-6 h-6"  icon={<TypeIcon className="w-6 h-6" />} />} />
+        <IABox title="Áudio"   desc="Voz neural, TTS e narrações."      href="/portal/audio" bgSrc="/portal/audio-bg.svg"  icon={<Mic2 className="w-6 h-6"  icon={<Mic2 className="w-6 h-6" />} />} />
+        <IABox title="Vídeo"   desc="Clipes e storyboards com IA."      href="/portal/video" bgSrc="/portal/video-bg.svg"  icon={<Clapperboard className="w-6 h-6"  icon={<Clapperboard className="w-6 h-6" />} />} />
       </div>
 
       {/* Dica */}
-      <div className="mt-8 rounded-2xl border border-border bg-card p-4 text-sm text-muted">
+      <div className="mt-8 rounded-2xl border border-border bg-card p-4 text-sm text-muted elev-panel">
         Dica: você pode comprar mais créditos quando quiser — o saldo aparece sempre aqui no topo.
       </div>
     </div>
   );
 }
+
+
+
+
+
+
+
+
