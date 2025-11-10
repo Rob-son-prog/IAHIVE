@@ -27,11 +27,7 @@
 
 /* ====== Base ====== */
 @layer base {
-  /* aplica fundos/textos globais */
   body { @apply bg-background text-foreground; }
-
-  /* usa nosso token como COR DE BORDA PADRÃO do app
-     (qualquer classe `border` sem cor específica vai herdar isto) */
   *, ::before, ::after { border-color: var(--border); }
 }
 
@@ -39,18 +35,19 @@
 @layer utilities {
   .text-balance { text-wrap: balance; }
 }
-/* === IA.HIVE: Botão Glow (Abrir IA) === */
+/* ===== IA.HIVE – BOTÕES E UTILITÁRIOS GLOBAIS ===== */
+
+/* Botão Glow (Abrir IA) — global (usado em vários lugares) */
 .btn-ia{
   position:relative; display:inline-flex; align-items:center; gap:.5rem;
-  padding:.5rem 1rem; border-radius: .75rem; font-weight:600; font-size:.875rem;
-  color:#0b0b0f; background: rgba(255,255,255,.95);
-  transition: transform .15s ease, box-shadow .2s ease, background .2s ease;
-  box-shadow: 0 0 0 1px rgba(168,85,247,.25), 0 6px 22px rgba(2,6,23,.25);
-  will-change: transform;
+  padding:.5rem 1rem; border-radius:.75rem; font-weight:600; font-size:.875rem;
+  color:#0b0b0f; background:rgba(255,255,255,.95);
+  transition:transform .15s ease, box-shadow .2s ease, background .2s ease;
+  box-shadow:0 0 0 1px rgba(168,85,247,.25), 0 6px 22px rgba(2,6,23,.25);
+  will-change:transform;
 }
 .btn-ia svg{ opacity:.9 }
 .btn-ia:hover{ transform: translateY(-1px); background:#fff; }
-
 .btn-ia::before{
   content:""; position:absolute; inset:-3px; border-radius:inherit; z-index:-1;
   background: radial-gradient(90% 90% at 50% 120%,
@@ -58,166 +55,434 @@
   filter: blur(14px); opacity:0; transition:opacity .25s ease;
 }
 .btn-ia:hover::before{ opacity:1; }
-
-/* versão escura: reforça o contraste */
 .dark .btn-ia{
-  color:#0b0b0f; background: rgba(255,255,255,.90);
-  box-shadow: 0 0 0 1px rgba(168,85,247,.30), 0 8px 30px rgba(2,6,23,.45);
+  color:#0b0b0f; background:rgba(255,255,255,.90);
+  box-shadow:0 0 0 1px rgba(168,85,247,.30), 0 8px 30px rgba(2,6,23,.45);
 }
 
-/* === IA.HIVE — Light only elevation (não afeta .dark) === */
-html:not(.dark) .elev-card{
-  background: linear-gradient(180deg, rgba(255,255,255,.88), rgba(255,255,255,.92));
-  border: 1px solid rgba(15, 23, 42, .08);
-  box-shadow:
-    0 1px 2px rgba(15, 23, 42, .06),
-    0 8px 24px rgba(15, 23, 42, .08);
-  backdrop-filter: saturate(1.05);
+/* Rosa neon estilo Leonardo — global (são utilitários) */
+.leo-chip-active{
+  color:#fecdd3; background:rgba(244,63,94,.15); border:1px solid rgba(244,63,94,.40);
+  box-shadow: inset 0 0 0 1px rgba(244,63,94,.35), 0 12px 32px rgba(244,63,94,.18);
+}
+.leo-card-active{
+  background:rgba(244,63,94,.10); border:1px solid rgba(244,63,94,.40);
+  box-shadow: inset 0 0 0 1px rgba(244,63,94,.35), 0 16px 40px rgba(244,63,94,.20);
+}
+.leo-dot{
+  width:16px;height:16px;border-radius:3px;
+  background:linear-gradient(135deg,#fb7185,#ec4899,#a21caf);
+  box-shadow:0 0 18px rgba(236,72,153,.45);
+}
+.leo-text-rose{ color:#fecdd3; }
+
+@layer utilities {
+  .leo-chip-active{ color:#fecdd3 !important; background:rgba(244,63,94,.15) !important; border:1px solid rgba(244,63,94,.40) !important; box-shadow: inset 0 0 0 1px rgba(244,63,94,.35), 0 12px 32px rgba(244,63,94,.18) !important; }
+  .leo-card-active{ background:rgba(244,63,94,.10) !important; border:1px solid rgba(244,63,94,.40) !important; box-shadow: inset 0 0 0 1px rgba(244,63,94,.35), 0 16px 40px rgba(244,63,94,.20) !important; }
+  .leo-dot{ width:16px;height:16px;border-radius:3px; background:linear-gradient(135deg,#fb7185,#ec4899,#a21caf); box-shadow:0 0 18px rgba(236,72,153,.45) !important; }
+  :root { --leo-rose:#FF4D8D; --leo-violet:#B368FF; --leo-rose-200:#FFD1E1; --leo-glow:rgba(255,77,141,.62); --leo-glow-soft:rgba(179,104,255,.35); }
+  .leo-chip-active.neon{
+    color: var(--leo-rose-200) !important;
+    background: linear-gradient(0deg, rgba(255,255,255,.02), rgba(255,255,255,.02)), linear-gradient(135deg, var(--leo-rose) 0%, var(--leo-violet) 100%) !important;
+    border:1px solid rgba(255,77,141,.45) !important;
+    box-shadow: 0 0 0 1px rgba(255,77,141,.35) inset, 0 12px 34px var(--leo-glow), 0 4px 16px var(--leo-glow-soft) !important;
+  }
+  .leo-card-active.neon{
+    background: linear-gradient(135deg, rgba(255,77,141,.12), rgba(179,104,255,.12)) !important;
+    border:1px solid rgba(255,77,141,.45) !important;
+    box-shadow: 0 0 0 1px rgba(255,77,141,.35) inset, 0 16px 40px var(--leo-glow-soft) !important;
+  }
 }
 
-html:not(.dark) .elev-ring{
-  /* aro de foco/hover sutil no claro */
-  outline: 0;
-}
-html:not(.dark) .elev-ring:hover{
-  box-shadow:
-    0 1px 2px rgba(15, 23, 42, .06),
-    0 10px 28px rgba(15, 23, 42, .10),
-    0 0 0 1px rgba(15,23,42,.10) inset;
-}
+/* ===== POLISH OPCIONAL (aplique a classe .polish no wrapper da página) === */
 
-/* === IA.HIVE Light polish (apenas light) === */
-html:not(.dark) .elev-card{
-  /* fundo com leve gradiente e blur muito sutil */
+/* Elevações, gradiente de body e tipografia — só no LIGHT e só dentro de .polish */
+.polish:not(.dark) .elev-card{
   background: linear-gradient(180deg, rgba(255,255,255,.88), rgba(255,255,255,.96));
-  backdrop-filter: saturate(1.05) blur(2px);
   border-color: rgba(15,23,42,.10);
-  box-shadow:
-    0 1px 2px rgba(15,23,42,.06),
-    0 8px 24px rgba(15,23,42,.10);
+  box-shadow: 0 1px 2px rgba(15,23,42,.06), 0 8px 24px rgba(15,23,42,.10);
+  backdrop-filter: saturate(1.05) blur(2px);
 }
-html:not(.dark) .elev-ring:hover{
-  box-shadow:
-    0 1px 2px rgba(15,23,42,.06),
-    0 12px 30px rgba(15,23,42,.12),
-    0 0 0 1px rgba(15,23,42,.12) inset;
+.polish:not(.dark) .elev-ring{ outline:0; }
+.polish:not(.dark) .elev-ring:hover{
+  box-shadow: 0 1px 2px rgba(15,23,42,.06), 0 12px 30px rgba(15,23,42,.12), 0 0 0 1px rgba(15,23,42,.12) inset;
 }
 
+/* Gradiente do body – opcional (apenas nas páginas que tiverem .polish no <body> ou wrapper) */
+.polish:not(.dark) body, .polish:not(.dark) .polish-body {
+  background: linear-gradient(180deg, #f7f9fc 0%, #eef1f6 100%);
+}
+
+/* Tipografia dos cards da IA */
 @layer components {
-}
-
-
-@layer base {
-  /* Light mode polish — NÃO afeta .dark */
-  html:not(.dark) {
-    --background: #f8fafc;         /* fundo mais claro (slate-50/100) */
-    --foreground: #0b0d12;         /* texto mais escuro */
-    --card: #ffffff;               /* cartões bem brancos */
-    --card-foreground: #0b0d12;    /* texto de cards mais legível */
-    --border: rgba(15,23,42,.12);  /* borda visível em telas claras */
-    --muted: #64748b;              /* cinza para legendas (slate-500) */
+  .polish:not(.dark) .ia-box h1,
+  .polish:not(.dark) .ia-box h2,
+  .polish:not(.dark) .ia-box h3 {
+    color:#ffffff !important;
+    text-shadow:0 2px 18px rgba(0,0,0,.30), 0 1px 4px rgba(0,0,0,.25);
+  }
+  .polish:not(.dark) .ia-box p {
+    color: rgba(255,255,255,.92) !important;
+    text-shadow: 0 1px 8px rgba(0,0,0,.25);
+  }
+  .polish:not(.dark) .ia-overlay{
+    background: linear-gradient(to top, rgba(0,0,0,.55) 0%, rgba(0,0,0,.28) 55%, rgba(0,0,0,.10) 100%);
   }
 }
+
+/* Painéis do light com blur/sombra – só quando a página tiver .polish */
 @layer components {
-  /* Light-only elevation — não altera o .dark */
-  html:not(.dark) .elev-card{
-    background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.98));
-    border: 1px solid rgba(15,23,42,.10);
-    box-shadow:
-      0 1px 2px rgba(15,23,42,.06),
-      0 10px 28px rgba(15,23,42,.12);
-    backdrop-filter: saturate(1.05) blur(2px);
-  }
-  html:not(.dark) .elev-ring:hover{
-    box-shadow:
-      0 1px 2px rgba(15,23,42,.06),
-      0 12px 32px rgba(15,23,42,.14),
-      0 0 0 1px rgba(15,23,42,.12) inset;
-  }
-
-  /* Painéis/boxes (barra de créditos, avisos, etc.) */
-  html:not(.dark) .elev-panel{
+  .polish:not(.dark) .elev-panel{
     background: rgba(255,255,255,.96);
     border: 1px solid rgba(15,23,42,.10);
-    box-shadow:
-      0 1px 2px rgba(15,23,42,.05),
-      0 8px 20px rgba(15,23,42,.10);
+    box-shadow: 0 1px 2px rgba(15,23,42,.05), 0 8px 20px rgba(15,23,42,.10);
     backdrop-filter: blur(2px);
   }
 }
-html:not(.dark) {
-  --background: #f5f7fa;
-  --foreground: #0b0c0f;
-  --card: #ffffff;
-  --border: rgba(0,0,0,.08);
-}
 
-html:not(.dark) body {
-  background: linear-gradient(180deg, #f7f9fc 0%, #eef1f6 100%);
-  color: var(--foreground);
-}
-
-html:not(.dark) h1, html:not(.dark) h2, html:not(.dark) h3 {
-  color: #111827;
-}
-
-html:not(.dark) p {
-  color: #374151;
-}
-
-html:not(.dark) .elev-panel, html:not(.dark) .elev-card {
-  border-radius: 18px;
-  backdrop-filter: blur(4px);
-  transition: all .3s ease;
-}
-
-html:not(.dark) .elev-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 20px rgba(0,0,0,.08);
-}
+/* Pequenos utilitários */
+.elev-card { box-shadow: 0 6px 20px rgba(2,6,23,.06); }
+.dark .elev-card { box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+/* ===== /portal/image · Light-only contrast boost (não afeta o DARK) ===== */
 @layer components {
-  /* Restauro de tipografia dentro dos cards no LIGHT (não afeta dark) */
-  html:not(.dark) .ia-box h1,
-  html:not(.dark) .ia-box h2,
-  html:not(.dark) .ia-box h3 { 
-    color: #ffffff !important;
-    text-shadow: 0 2px 18px rgba(0,0,0,.30), 0 1px 4px rgba(0,0,0,.25);
-  }
-  html:not(.dark) .ia-box p {
-    color: rgba(255,255,255,.92) !important;
-    text-shadow: 0 1px 8px rgba(0,0,0,.25);
+  /* Reforça tokens locais da página (mantém o resto do site igual) */
+  html:not(.dark) [data-page="portal-image"] {
+    --background: #f8fafc;   /* mais claro que #f7f7f8 */
+    --foreground: #0b0d12;   /* texto um tom mais escuro */
+    --card: #ffffff;         /* superfícies brancas */
+    --card-foreground: #0b0d12;
+    --border: #d1d5db;       /* ≈ slate-300 para bordas mais visíveis */
+    --muted: #475569;        /* ≈ slate-600 para legendas */
   }
 
-  /* Overlay um pouco mais forte no LIGHT para legibilidade do texto nos cards */
-  html:not(.dark) .ia-overlay{
-    background: linear-gradient(
-      to top,
-      rgba(0,0,0,.55) 0%,
-      rgba(0,0,0,.28) 55%,
-      rgba(0,0,0,.10) 100%
-    );
+  /* Painéis e cards da página: branco + borda visível */
+  html:not(.dark) [data-page="portal-image"] .panel,
+  html:not(.dark) [data-page="portal-image"] .card,
+  html:not(.dark) [data-page="portal-image"] .elev-panel,
+  html:not(.dark) [data-page="portal-image"] .elev-card {
+    background: var(--card);
+    color: var(--card-foreground);
+    border-color: var(--border);
+    box-shadow:
+      0 1px 2px rgba(15,23,42,.06),
+      0 8px 20px rgba(15,23,42,.08);
+  }
+
+  /* Inputs e selects: fundo branco, borda mais escura e foco nítido */
+  html:not(.dark) [data-page="portal-image"] input,
+  html:not(.dark) [data-page="portal-image"] textarea,
+  html:not(.dark) [data-page="portal-image"] select {
+    background-color: #fff;
+    color: var(--foreground);
+    border: 1px solid #cbd5e1; /* slate-300 */
+  }
+  html:not(.dark) [data-page="portal-image"] input:focus,
+  html:not(.dark) [data-page="portal-image"] textarea:focus,
+  html:not(.dark) [data-page="portal-image"] select:focus {
+    outline: 0;
+    border-color: #94a3b8;          /* slate-400 */
+    box-shadow: 0 0 0 3px rgba(148,163,184,.25);
+  }
+
+  /* Textos secundários (placeholders, hints etc.) */
+  html:not(.dark) [data-page="portal-image"] .muted,
+  html:not(.dark) [data-page="portal-image"] .text-muted-foreground {
+    color: var(--muted);
+  }
+
+  /* Botões “Disabled” e chips com mais legibilidade */
+  html:not(.dark) [data-page="portal-image"] .btn[disabled],
+  html:not(.dark) [data-page="portal-image"] button[disabled] {
+    background: #f1f5f9;   /* slate-100 */
+    color: #64748b;        /* slate-500 */
+    border-color: #cbd5e1; /* slate-300 */
+    opacity: 1;
+  }
+  html:not(.dark) [data-page="portal-image"] .chip,
+  html:not(.dark) [data-page="portal-image"] .option {
+    border-color: #cbd5e1;
   }
 }
+/* ===== /portal/image · Light-only contrast boost (não afeta o DARK) ===== */
 @layer components {
-  /* Restauro de tipografia dentro dos cards no LIGHT (não afeta dark) */
-  html:not(.dark) .ia-box h1,
-  html:not(.dark) .ia-box h2,
-  html:not(.dark) .ia-box h3 { 
-    color: #ffffff !important;
-    text-shadow: 0 2px 18px rgba(0,0,0,.30), 0 1px 4px rgba(0,0,0,.25);
-  }
-  html:not(.dark) .ia-box p {
-    color: rgba(255,255,255,.92) !important;
-    text-shadow: 0 1px 8px rgba(0,0,0,.25);
+  /* Tokens locais só nesta página e só no claro */
+  html:not(.dark) [data-page="portal-image"] {
+    --background: #f8fafc;
+    --foreground: #0b0d12;
+    --card: #ffffff;
+    --card-foreground: #0b0d12;
+    --border: #d1d5db;   /* slate-300 */
+    --muted: #475569;    /* slate-600 */
   }
 
-  /* Overlay um pouco mais forte no LIGHT para legibilidade do texto nos cards */
-  html:not(.dark) .ia-overlay{
-    background: linear-gradient(
-      to top,
-      rgba(0,0,0,.55) 0%,
-      rgba(0,0,0,.28) 55%,
-      rgba(0,0,0,.10) 100%
-    );
+  /* Cards/painéis: branco + borda visível */
+  html:not(.dark) [data-page="portal-image"] .panel,
+  html:not(.dark) [data-page="portal-image"] .card,
+  html:not(.dark) [data-page="portal-image"] .elev-panel,
+  html:not(.dark) [data-page="portal-image"] .elev-card {
+    background: var(--card);
+    color: var(--card-foreground);
+    border-color: var(--border);
+    box-shadow:
+      0 1px 2px rgba(15,23,42,.06),
+      0 8px 20px rgba(15,23,42,.08);
+  }
+
+  /* Inputs/selects: borda e foco mais nítidos */
+  html:not(.dark) [data-page="portal-image"] input,
+  html:not(.dark) [data-page="portal-image"] textarea,
+  html:not(.dark) [data-page="portal-image"] select {
+    background-color: #fff;
+    color: var(--foreground);
+    border: 1px solid #cbd5e1; /* slate-300 */
+  }
+  html:not(.dark) [data-page="portal-image"] input:focus,
+  html:not(.dark) [data-page="portal-image"] textarea:focus,
+  html:not(.dark) [data-page="portal-image"] select:focus {
+    outline: 0;
+    border-color: #94a3b8;      /* slate-400 */
+    box-shadow: 0 0 0 3px rgba(148,163,184,.25);
+  }
+
+  /* Textos secundários */
+  html:not(.dark) [data-page="portal-image"] .muted,
+  html:not(.dark) [data-page="portal-image"] .text-muted-foreground {
+    color: var(--muted);
+  }
+
+  /* Botões desabilitados e chips */
+  html:not(.dark) [data-page="portal-image"] .btn[disabled],
+  html:not(.dark) [data-page="portal-image"] button[disabled] {
+    background: #f1f5f9;   /* slate-100 */
+    color: #64748b;        /* slate-500 */
+    border-color: #cbd5e1; /* slate-300 */
+    opacity: 1;
+  }
+  html:not(.dark) [data-page="portal-image"] .chip,
+  html:not(.dark) [data-page="portal-image"] .option {
+    border-color: #cbd5e1;
+  }
+}
+/* ===== /portal/image · TIPOGRAFIA (LIGHT only) =========================== */
+@layer components {
+  html:not(.dark) [data-page="portal-image"] h1,
+  html:not(.dark) [data-page="portal-image"] h2,
+  html:not(.dark) [data-page="portal-image"] h3 {
+    color:#0b0d12;          /* texto mais escuro */
+    font-weight:600;        /* mais presença */
+    letter-spacing:-0.01em; /* leve ajuste */
+  }
+
+  /* rótulos / títulos de seção */
+  html:not(.dark) [data-page="portal-image"] .label,
+  html:not(.dark) [data-page="portal-image"] .form-label,
+  html:not(.dark) [data-page="portal-image"] .section-title {
+    color:#0f172a;          /* slate-900 */
+    font-weight:600;
+  }
+
+  /* legendas secundárias / hints */
+  html:not(.dark) [data-page="portal-image"] .muted,
+  html:not(.dark) [data-page="portal-image"] .text-muted-foreground {
+    color:#475569;          /* slate-600 */
+  }
+
+  /* placeholder mais visível */
+  html:not(.dark) [data-page="portal-image"] ::placeholder {
+    color:#64748b;          /* slate-500 */
+    opacity:1;
+  }
+}
+/* ===== /portal/image · CAMPOS DE FORMULÁRIO (LIGHT only) ================= */
+@layer components {
+  html:not(.dark) [data-page="portal-image"] input,
+  html:not(.dark) [data-page="portal-image"] textarea,
+  html:not(.dark) [data-page="portal-image"] select {
+    background:#ffffff;
+    color:#0b0d12;
+    border:1px solid #cbd5e1;   /* slate-300 */
+    box-shadow: 0 1px 0 rgba(15,23,42,.03);
+  }
+
+  html:not(.dark) [data-page="portal-image"] input:focus,
+  html:not(.dark) [data-page="portal-image"] textarea:focus,
+  html:not(.dark) [data-page="portal-image"] select:focus {
+    outline:0;
+    border-color:#94a3b8;       /* slate-400 */
+    box-shadow: 0 0 0 3px rgba(148,163,184,.28);
+  }
+}
+/* ===== /portal/image · BOTÕES (LIGHT only) =============================== */
+@layer components {
+  /* botão padrão */
+  html:not(.dark) [data-page="portal-image"] button,
+  html:not(.dark) [data-page="portal-image"] .btn {
+    background:#ffffff;
+    color:#0b0d12;
+    border:1px solid #cbd5e1;        /* slate-300 */
+    box-shadow: 0 1px 0 rgba(15,23,42,.03);
+  }
+  /* hover/active com feedback */
+  html:not(.dark) [data-page="portal-image"] button:hover,
+  html:not(.dark) [data-page="portal-image"] .btn:hover {
+    background:#f8fafc;              /* slate-50 */
+    border-color:#94a3b8;             /* slate-400 */
+    box-shadow:
+      0 1px 2px rgba(15,23,42,.07),
+      0 8px 20px rgba(15,23,42,.08);
+  }
+  html:not(.dark) [data-page="portal-image"] button:active,
+  html:not(.dark) [data-page="portal-image"] .btn:active {
+    transform: translateY(0.5px);
+  }
+  /* disabled bem legível (sem “lavar” demais) */
+  html:not(.dark) [data-page="portal-image"] button[disabled],
+  html:not(.dark) [data-page="portal-image"] .btn[disabled] {
+    background:#f1f5f9;              /* slate-100 */
+    color:#64748b;                   /* slate-500 */
+    border-color:#cbd5e1;            /* slate-300 */
+    opacity:1;
+  }
+}
+/* ===== /portal/image · CHIPS / SEGMENTOS (LIGHT only) ==================== */
+@layer components {
+  /* visual base */
+  html:not(.dark) [data-page="portal-image"] .chip,
+  html:not(.dark) [data-page="portal-image"] .option,
+  html:not(.dark) [data-page="portal-image"] .segment {
+    background:#ffffff;
+    color:#0b0d12;
+    border:1px solid #cbd5e1;
+  }
+  /* hover */
+  html:not(.dark) [data-page="portal-image"] .chip:hover,
+  html:not(.dark) [data-page="portal-image"] .option:hover,
+  html:not(.dark) [data-page="portal-image"] .segment:hover {
+    background:#f8fafc;
+    border-color:#94a3b8;
+  }
+  /* ativo/selecionado */
+  html:not(.dark) [data-page="portal-image"] .chip.active,
+  html:not(.dark) [data-page="portal-image"] .option.active,
+  html:not(.dark) [data-page="portal-image"] .segment.active,
+  html:not(.dark) [data-page="portal-image"] [aria-pressed="true"],
+  html:not(.dark) [data-page="portal-image"] [aria-selected="true"] {
+    background:#eef2ff;              /* indigo-100 suave */
+    border-color:#818cf8;            /* indigo-400 */
+    color:#1e293b;                   /* slate-800 */
+    box-shadow: 0 0 0 2px rgba(129,140,248,.25) inset;
+  }
+}
+/* ===== /portal/image · CARDS/PAINÉIS (LIGHT only) ======================== */
+@layer components {
+  html:not(.dark) [data-page="portal-image"] .panel,
+  html:not(.dark) [data-page="portal-image"] .card,
+  html:not(.dark) [data-page="portal-image"] .elev-panel,
+  html:not(.dark) [data-page="portal-image"] .elev-card {
+    background:#ffffff;
+    color:#0b0d12;
+    border-color:#d1d5db;           /* slate-300 */
+    box-shadow:
+      0 1px 2px rgba(15,23,42,.06),
+      0 8px 20px rgba(15,23,42,.08);
+  }
+}
+/* ===== /portal/image · AJUSTES FINOS (LIGHT only, opcional) ============== */
+@layer utilities {
+  html:not(.dark) [data-page="portal-image"] .section-title { font-size:.95rem; }
+  html:not(.dark) [data-page="portal-image"] .label, 
+  html:not(.dark) [data-page="portal-image"] .form-label { font-size:.9rem; }
+}
+/* ===== /portal/image · Chips com BORDA-DEGRADÊ (LIGHT only) ============= */
+@layer components {
+  :root {
+    --ia-rose: #FF4D8D;     /* mesma paleta da "mensalidade" */
+    --ia-violet: #B368FF;
+    --ia-glow: rgba(255,77,141,.28);
+    --ia-glow-soft: rgba(179,104,255,.22);
+  }
+
+  /* Inativos (só no CLARO) — deixam o texto mais escuro e hover visível */
+  html:not(.dark) [data-page="portal-image"] .inline-flex.rounded-xl > button:not(.leo-chip-active) {
+    background:#ffffff;
+    color:#0b0d12;
+  }
+  html:not(.dark) [data-page="portal-image"] .inline-flex.rounded-xl > button:not(.leo-chip-active):hover {
+    background:#f8fafc;
+  }
+
+  /* ATIVO — redefinimos a classe existente para "apenas contorno" em degradê */
+  html:not(.dark) [data-page="portal-image"] .leo-chip-active {
+    border:1.5px solid transparent !important;
+    background:
+      linear-gradient(var(--card), var(--card)) padding-box,
+      linear-gradient(135deg, var(--ia-rose), var(--ia-violet)) border-box !important;
+    color: var(--foreground) !important;
+    box-shadow:
+      0 8px 22px var(--ia-glow),
+      0 3px 10px var(--ia-glow-soft) !important;
+  }
+
+  /* Estados ARIA (caso existam) */
+  html:not(.dark) [data-page="portal-image"] .inline-flex.rounded-xl > button[aria-pressed="true"],
+  html:not(.dark) [data-page="portal-image"] .inline-flex.rounded-xl > button[aria-selected="true"] {
+    border:1.5px solid transparent;
+    background:
+      linear-gradient(var(--card), var(--card)) padding-box,
+      linear-gradient(135deg, var(--ia-rose), var(--ia-violet)) border-box;
+    box-shadow:
+      0 8px 22px var(--ia-glow),
+      0 3px 10px var(--ia-glow-soft);
+    color: var(--foreground);
+  }
+
+  /* Tipografia dos números mais presente */
+  html:not(.dark) [data-page="portal-image"] .inline-flex.rounded-xl > button { 
+    font-weight:600; letter-spacing:-.01em;
+  }
+}
+/* ===== /portal/image · Chips com BORDA-DEGRADÊ (DARK only) ============== */
+/* Usa a mesma paleta da landing: rosa → violeta. Mantém texto legível. */
+@layer components {
+  :root {
+    --ia-rose: #FF4D8D;
+    --ia-violet: #B368FF;
+    --ia-glow: rgba(255,77,141,.28);
+    --ia-glow-soft: rgba(179,104,255,.22);
+  }
+
+  /* Base (inativos) no dark — mantém seu “chumbo” */
+  .dark [data-page="portal-image"] .inline-flex.rounded-xl > button:not(.leo-chip-active) {
+    background: rgba(255,255,255,.04);
+    color: #e5e7eb;                 /* texto claro */
+    border-color: #2a2a30;          /* token de borda dark */
+  }
+  .dark [data-page="portal-image"] .inline-flex.rounded-xl > button:not(.leo-chip-active):hover {
+    background: rgba(255,255,255,.07);
+  }
+
+  /* ATIVO — só a BORDA recebe o degradê; o fill permanece escuro */
+  .dark [data-page="portal-image"] .leo-chip-active {
+    border: 1.5px solid transparent !important;
+    background:
+      linear-gradient(rgba(15,16,19,.60), rgba(15,16,19,.60)) padding-box,
+      linear-gradient(135deg, var(--ia-rose), var(--ia-violet)) border-box !important;
+    color: #f5f5f5 !important;
+    box-shadow:
+      0 8px 22px var(--ia-glow),
+      0 3px 10px var(--ia-glow-soft) !important;
+  }
+
+  /* Estados ARIA (se usados) */
+  .dark [data-page="portal-image"] .inline-flex.rounded-xl > button[aria-pressed="true"],
+  .dark [data-page="portal-image"] .inline-flex.rounded-xl > button[aria-selected="true"] {
+    border: 1.5px solid transparent;
+    background:
+      linear-gradient(rgba(15,16,19,.60), rgba(15,16,19,.60)) padding-box,
+      linear-gradient(135deg, var(--ia-rose), var(--ia-violet)) border-box;
+    color: #f5f5f5;
+    box-shadow:
+      0 8px 22px var(--ia-glow),
+      0 3px 10px var(--ia-glow-soft);
   }
 }
