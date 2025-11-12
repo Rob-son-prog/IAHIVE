@@ -1,18 +1,30 @@
-"use client";
+﻿"use client";
 
-export default function PortalTopbar({ onSignOut }: { onSignOut: () => void }) {
+import { useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
+
+export default function PortalTopbar() {
+  const router = useRouter();
+
+  const handleLogout = useCallback(async () => {
+    // 1) encerra a sessão sem redirecionar automático
+    await signOut({ redirect: false });
+    // 2) leva para a tela de login
+    router.replace("/login");
+  }, [router]);
+
   return (
-    <header className="sticky top-0 z-10 border-b border-white/10 bg-neutral-950/75 backdrop-blur">
-      <div className="px-4 py-3 flex items-center justify-between">
-        <h1 className="text-sm text-neutral-400">Portal do Cliente</h1>
-        <button
-          onClick={onSignOut}
-          className="rounded-lg border border-white/15 px-3 py-1.5 text-sm hover:bg-white/5"
-          title="Encerrar sessão"
-        >
-          Sair
-        </button>
-      </div>
-    </header>
+    <div className="sticky top-0 z-30 flex items-center justify-between border-b border-border bg-background/70 px-4 py-3 backdrop-blur">
+      <div className="text-sm text-muted">Portal do Cliente</div>
+
+      <button
+        onClick={handleLogout}
+        className="rounded-xl border border-border px-3 py-1.5 text-sm hover:bg-card"
+        aria-label="Sair"
+      >
+        Sair
+      </button>
+    </div>
   );
 }

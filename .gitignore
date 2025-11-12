@@ -21,3 +21,30 @@ logs/
 **/prisma/*.db
 **/*.sqlite
 **/*.db-journal
+# === NUNCA COMMITAR CREDENCIAIS ===
+.env
+.env.*
+**/.env
+**/.env.*
+apps/web/.env*
+apps/api/.env*
+
+# dependências / builds
+node_modules/
+**/.next/
+dist/
+coverage/
+
+# backups / artefatos locais
+__report/
+*.zip
+*.log
+*.tmp
+
+# arquivos de backup/rascunho
+*.bak
+*.backup
+*.bak-*
+*.backup.*
+apps/web/src/**/*.bak*
+apps/web/src/**/*.backup*

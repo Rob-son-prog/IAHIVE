@@ -11,6 +11,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         defaultTheme="dark"
         enableSystem={false}
         storageKey="iahive-theme"
+        themes={["light","dark"]}
       >
         {children}
       </ThemeProvider>

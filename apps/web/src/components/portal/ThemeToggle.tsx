@@ -5,52 +5,40 @@ import { motion } from "framer-motion";
 import { FiMoon, FiSun } from "react-icons/fi";
 import { useTheme } from "next-themes";
 
-const TOGGLE_CLASSES =
-  "text-sm font-medium flex items-center gap-2 px-3 md:pl-3 md:pr-3.5 py-3 md:py-1.5 transition-colors relative z-10";
+const BTN = "text-xs md:text-sm font-medium flex items-center gap-2 px-3 md:pl-3 md:pr-3.5 py-2 md:py-1.5 transition-colors relative z-10";
 
 export default function ThemeToggle() {
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const selected = (mounted ? theme : resolvedTheme) === "light" ? "light" : "dark";
-
   useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
 
-  function handleSelect(next: "light" | "dark") {
-    setTheme(next);
-    try { localStorage.setItem("iahive-theme", next); } catch {}
-  }
-
-  if (!mounted) {
-    return (
-      <div className="relative flex w-fit items-center rounded-full border border-neutral-800 bg-neutral-950 px-3 py-1.5 text-xs text-neutral-400">
-        Tema
-      </div>
-    );
-  }
+  const selected = resolvedTheme === "light" ? "light" : "dark";
 
   return (
-    <div className="relative flex w-fit items-center rounded-full border border-neutral-800 bg-neutral-950">
+    <div className="relative flex w-fit items-center rounded-full border border-border bg-card">
       <button
-        className={`${TOGGLE_CLASSES} ${selected === "light" ? "text-white" : "text-slate-300"}`}
-        onClick={() => handleSelect("light")}
+        className={`${BTN} ${selected === "light" ? "text-foreground" : "text-muted"}`}
+        onClick={() => setTheme("light")}
         aria-label="Ativar tema claro"
       >
-        <FiSun className="relative z-10 text-lg md:text-sm" />
+        <FiSun className="relative z-10" />
         <span className="relative z-10">Claro</span>
       </button>
       <button
-        className={`${TOGGLE_CLASSES} ${selected === "dark" ? "text-white" : "text-slate-800"}`}
-        onClick={() => handleSelect("dark")}
+        className={`${BTN} ${selected === "dark" ? "text-foreground" : "text-muted"}`}
+        onClick={() => setTheme("dark")}
         aria-label="Ativar tema escuro"
       >
-        <FiMoon className="relative z-10 text-lg md:text-sm" />
+        <FiMoon className="relative z-10" />
         <span className="relative z-10">Escuro</span>
       </button>
+
       <div className={`absolute inset-0 z-0 flex ${selected === "dark" ? "justify-end" : "justify-start"}`}>
         <motion.span
           layout
-          transition={{ type: "spring", damping: 15, stiffness: 250 }}
-          className="h-full w-1/2 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600"
+          transition={{ type: "spring", damping: 16, stiffness: 260 }}
+          className="h-full w-1/2 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600/90"
         />
       </div>
     </div>
