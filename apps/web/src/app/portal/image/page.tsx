@@ -1,10 +1,16 @@
 ﻿"use client";
 
 import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import CreditBar from "../../../components/portal/CreditBar";
 import PromptBox from "../../../components/portal/PromptBox";
 import { userMock } from "../../../data/portal-mock";
-import ModelPicker, { ModelInfo } from "../../../components/portal/ModelPicker";
+import ModelPicker, {
+  ModelInfo,
+  MODEL_LOGOS,
+  MODEL_ALTS,
+} from "../../../components/portal/ModelPicker";
 
 type Img = { id: string; url: string; w: number; h: number };
 
@@ -19,11 +25,16 @@ const ASPECT_SIZES: Record<Aspect, { w: number; h: number }> = {
 
 const QUALITY_SCALE: Record<Quality, number> = { fast: 1, ultra: 1.25 };
 
+/** Lista de modelos exibidos no modal + chip. */
 const ALL_MODELS: ModelInfo[] = [
-  { id: "lucid-origin", name: "Lucid Origin", subtitle: "Alta coerência e render HD", badge: "New" },
-  { id: "nano-banana", name: "Nano Banana", subtitle: "Edição e visuais inteligentes", badge: "New" },
-  { id: "lucid-realism", name: "Lucid Realism", subtitle: "Cinemático realista" },
-  { id: "photo-pro", name: "Photo Pro", subtitle: "Enfoque fotográfico" },
+  { id: "leonardo",       name: "Leonardo.Ai",                          subtitle: "Render versátil e rápido",           badge: "NEW" },
+  { id: "openai-dalle3",  name: "OpenAI (DALL·E 3)",                    subtitle: "Coerência e texto" },
+  { id: "stability-sd",   name: "Stability AI (Stable Diffusion)",      subtitle: "Modelos SD populares" },
+  { id: "nano-banana",    name: "Nano Banana",                          subtitle: "Edição e visuais inteligentes",     badge: "NEW" },
+  { id: "getimg",         name: "Getimg.ai",                            subtitle: "Geração multimodelos" },
+  { id: "clipdrop",       name: "ClipDrop API (Stability)",             subtitle: "Ferramentas da Stability" },
+  { id: "getimg-2",       name: "Getimg.ai (alt)",                      subtitle: "Variação/backup" },
+  { id: "bedrock-titan",  name: "Amazon Bedrock (Titan Image)",         subtitle: "Integração AWS" },
 ];
 
 export default function ImagePage() {
@@ -62,6 +73,17 @@ export default function ImagePage() {
 
   return (
     <div data-page="portal-image" className="mx-auto w-full max-w-7xl p-4 md:p-6">
+      {/* Voltar para /portal */}
+      <div className="mb-3">
+        <Link
+          href="/portal"
+          className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 dark:text-neutral-200 dark:hover:bg-white/5"
+        >
+          <span className="inline-block h-4 w-4 rounded-full border border-border text-center leading-[14px]">←</span>
+          Voltar
+        </Link>
+      </div>
+
       <CreditBar credits={userMock.credits} usageThisMonth={userMock.usageThisMonth} />
 
       <div className="mt-6 flex flex-col gap-2">
@@ -180,7 +202,16 @@ export default function ImagePage() {
             onClick={() => setModelOpen(true)}
             className="inline-flex items-center gap-2 rounded-xl border border-border px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 dark:text-neutral-200 dark:hover:bg-white/5"
           >
-            <span className="leo-dot inline-block align-[-2px]" />
+            {/* Ícone do modelo selecionado */}
+            <span className="inline-flex h-5 w-5 overflow-hidden rounded">
+              <Image
+                src={MODEL_LOGOS[model] ?? "/models/leonardo.svg"}
+                alt={MODEL_ALTS[model] ?? "Modelo"}
+                width={20}
+                height={20}
+                className="h-5 w-5 object-contain"
+              />
+            </span>
             {modelLabel}
           </button>
         </div>
@@ -191,7 +222,7 @@ export default function ImagePage() {
         <PromptBox
           placeholder="Ex.: logo cyberpunk com raposa, iluminação neon, bokeh, 32mm, DOF, 4k"
           onGenerate={handleGenerate}
-          generateLabel={loading ? "Gerando..." : "Gerar"}
+          buttonLabel={loading ? "Gerando..." : "Gerar"}
           disabled={loading}
         />
       </div>
