@@ -48,3 +48,28 @@ __report/
 *.backup.*
 apps/web/src/**/*.bak*
 apps/web/src/**/*.backup*
+# === NUNCA COMMITAR CREDENCIAIS ===
+.env
+.env.*
+**/.env
+**/.env.*
+
+# builds / deps
+node_modules/
+**/.next/
+dist/
+coverage/
+
+# relatórios / artefatos locais
+__report/
+*.zip
+*.log
+*.tmp
+
+# arquivos de backup/rascunho
+*.bak
+*.backup
+*.bak-*
+*.backup.*
+apps/web/src/**/*.bak*
+apps/web/src/**/*.backup*

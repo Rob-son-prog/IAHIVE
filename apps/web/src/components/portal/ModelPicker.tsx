@@ -7,6 +7,7 @@ import { useEffect } from "react";
    Mapas de logos oficiais (public/models) + alts
    ========================================================= */
 export const MODEL_LOGOS: Record<string, string> = {
+  // IMAGENS (já existiam)
   leonardo: "/models/leonardo.svg",
   "openai-dalle3": "/models/openai-dalle3.svg",
   "nano-banana": "/models/nano-banana.svg",
@@ -15,9 +16,20 @@ export const MODEL_LOGOS: Record<string, string> = {
   "bedrock-titan": "/models/bedrock-titan.svg",
   clipdrop: "/models/clipdrop.svg",
   "getimg-2": "/models/getimg-2.svg",
+
+  // TEXTO (novos)  
+   "gpt-5": "/models/gpt-5.svg",          // <- GPT-5
+  "gpt-4o": "/models/gpt-4o.svg",
+  "claude-3-opus": "/models/claude-3-opus.svg",
+  "gemini-1.5-pro": "/models/gemini-1.5-pro.svg", // <- Gemini
+  "mistral-large": "/models/mistral-large.svg",
+  "groq-llama3": "/models/groq-llama3.svg",
+  "cohere-command-r-plus": "/models/cohere-command-r-plus.svg",
+  "perplexity-pplx-online": "/models/perplexity-pplx-online.svg",
 };
 
 export const MODEL_ALTS: Record<string, string> = {
+  // IMAGENS
   leonardo: "Leonardo AI",
   "openai-dalle3": "OpenAI (DALL·E 3)",
   "stability-sd": "Stability AI (Stable Diffusion)",
@@ -26,7 +38,18 @@ export const MODEL_ALTS: Record<string, string> = {
   "getimg-2": "getimg.ai (modelo 2)",
   clipdrop: "Clipdrop",
   "bedrock-titan": "Amazon Bedrock (Titan)",
+
+  // TEXTO
+  "gpt-5": "OpenAI GPT-5",               // <- GPT-5
+  "gpt-4o": "OpenAI GPT-4o",
+  "claude-3-opus": "Anthropic Claude 3 Opus",
+  "gemini-1.5-pro": "Google Gemini 1.5 Pro",
+  "mistral-large": "Mistral Large",
+  "groq-llama3": "Groq Llama 3",
+  "cohere-command-r-plus": "Cohere Command R+",
+  "perplexity-pplx-online": "Perplexity pplx-online",
 };
+
 
 /* =========================================================
    Logos (usa arquivo de /public/models se houver; senão, inline)
