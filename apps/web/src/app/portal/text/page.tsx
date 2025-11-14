@@ -175,7 +175,7 @@ export default function TextPortalPage() {
   const [messages, setMessages] = useState<Msg[]>([]);
   const [lastPrompt, setLastPrompt] = useState<string | null>(null);
 
-  // NOVO: arquivo anexado no front (PDF, imagem, etc.)
+  // arquivo anexado (front)
   const [attachedFile, setAttachedFile] = useState<File | null>(null);
 
   const hasMessages = messages.length > 0;
@@ -193,7 +193,7 @@ export default function TextPortalPage() {
 
     setLastPrompt(trimmed);
 
-    // 👉 Aqui é o ponto futuro de integração com o backend
+    // Aqui será trocado por chamada pro backend
     console.log("Payload para backend:", {
       prompt: trimmed,
       modelId: selectedModel.id,
@@ -246,7 +246,7 @@ export default function TextPortalPage() {
         <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-5xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
           <TextHeader />
 
-          {/* título central */}
+          {/* título central (somente sem mensagens) */}
           <section className="mt-4 flex flex-col items-center gap-2 text-center">
             <h1 className="text-3xl font-semibold tracking-tight text-primary sm:text-4xl">
               Olá, robson.
@@ -319,12 +319,7 @@ export default function TextPortalPage() {
       <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-5xl flex-col gap-4 px-4 py-6 sm:px-6 lg:px-8">
         <TextHeader />
 
-        {/* título */}
-        <section className="mt-2 flex flex-col items-center gap-1 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight text-primary sm:text-3xl">
-            Olá, robson.
-          </h1>
-        </section>
+        {/* PERCEBA: sem título aqui, pra não repetir "Olá, robson." enquanto conversa */}
 
         {/* mensagens: área rolável */}
         <section className="mt-2 flex-1 space-y-3 overflow-y-auto pr-1">
