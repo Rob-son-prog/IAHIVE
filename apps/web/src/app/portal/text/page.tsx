@@ -27,16 +27,6 @@ type SelectedModel = {
   logoSrc?: string;
 };
 
-// mapa opcional de logos por modelo (usando arquivos em public/models)
-const MODEL_LOGOS: Record<string, string> = {
-  "gpt-4o": "/models/gpt-4o.svg",
-  // depois você pode ir colocando as demais:
-  // "gemini-1.5-pro": "/models/gemini-1.5-pro.svg",
-  // "claude-3-opus": "/models/claude-3-opus.svg",
-};
-
-
-// modelos de TEXTO
 // modelos de TEXTO
 const TEXT_MODELS: ModelInfo[] = [
   {
@@ -81,7 +71,6 @@ const TEXT_MODELS: ModelInfo[] = [
   },
 ];
 
-
 /// cabeçalho reaproveitado nos dois estados
 function TextHeader() {
   return (
@@ -112,6 +101,69 @@ function TextHeader() {
   );
 }
 
+/* ────────────────────────────────────────────────
+   Funções leves de recomendação de modelo
+   ──────────────────────────────────────────────── */
+
+type PromptAnalysis = {
+  code: boolean;
+  longContext: boolean;
+  webSearch: boolean;
+};
+
+function analyzePrompt(text: string): PromptAnalysis {
+  const t = text.toLowerCase();
+
+  const codeLike =
+    /function\s|\bconst\s|\blet\s|\bclass\s|=>|<\/?[a-z]+>|import\s.+from\s+['"]/.test(
+      text
+    );
+
+  const longContext = text.length > 2000;
+  const webSearch =
+    /agora|hoje|notícia|noticias|atualizado|em tempo real|últimas notícias|ultima noticia|ultimas novidades/.test(
+      t
+    );
+
+  return {
+    code: codeLike,
+    longContext,
+    webSearch,
+  };
+}
+
+function getRecommendedModels(lastPrompt: string | null): Set<string> {
+  if (!lastPrompt || !lastPrompt.trim()) {
+    return new Set<string>(["gpt-4o", "gpt-5"]);
+  }
+
+  const analysis = analyzePrompt(lastPrompt);
+  const ids = new Set<string>();
+
+  if (analysis.code) {
+    ids.add("gpt-4o");
+    ids.add("gpt-5");
+    ids.add("groq-llama3");
+  }
+
+  if (analysis.longContext) {
+    ids.add("claude-3-opus");
+    ids.add("gemini-1.5-pro");
+    ids.add("mistral-large");
+  }
+
+  if (analysis.webSearch) {
+    ids.add("perplexity-pplx-online");
+  }
+
+  if (ids.size === 0) {
+    ids.add("gpt-4o");
+    ids.add("gpt-5");
+  }
+
+  return ids;
+}
+
 export default function TextPortalPage() {
   const [pickerOpen, setPickerOpen] = useState(false);
 
@@ -121,6 +173,10 @@ export default function TextPortalPage() {
   });
 
   const [messages, setMessages] = useState<Msg[]>([]);
+  const [lastPrompt, setLastPrompt] = useState<string | null>(null);
+
+  // NOVO: arquivo anexado no front (PDF, imagem, etc.)
+  const [attachedFile, setAttachedFile] = useState<File | null>(null);
 
   const hasMessages = messages.length > 0;
 
@@ -132,12 +188,22 @@ export default function TextPortalPage() {
   }, [messages]);
 
   const handleSend = (text: string) => {
-    if (!text.trim()) return;
+    const trimmed = text.trim();
+    if (!trimmed) return;
+
+    setLastPrompt(trimmed);
+
+    // 👉 Aqui é o ponto futuro de integração com o backend
+    console.log("Payload para backend:", {
+      prompt: trimmed,
+      modelId: selectedModel.id,
+      file: attachedFile,
+    });
 
     const userMsg: Msg = {
       id: crypto.randomUUID(),
       role: "user",
-      content: text.trim(),
+      content: trimmed,
     };
     setMessages((prev) => [...prev, userMsg]);
 
@@ -153,11 +219,23 @@ export default function TextPortalPage() {
     }, 450);
   };
 
-  const resolvedLogo =
-  selectedModel.logoSrc ||
-  MODEL_LOGOS[selectedModel.id] ||
-  `/models/${selectedModel.id.replace(/[^\w-]/g, "").toLowerCase()}.svg`;
+  const recommendedIds = React.useMemo(
+    () => getRecommendedModels(lastPrompt),
+    [lastPrompt]
+  );
 
+  const modelsWithBadges: ModelInfo[] = React.useMemo(
+    () =>
+      TEXT_MODELS.map((m) => ({
+        ...m,
+        badge: recommendedIds.has(m.id) ? m.badge ?? "Recomendado" : m.badge,
+      })),
+    [recommendedIds]
+  );
+
+  const resolvedLogo =
+    selectedModel.logoSrc ||
+    `/models/${selectedModel.id.replace(/[^\w.-]/g, "").toLowerCase()}.svg`;
 
   /* ─────────────────────────────
      ESTADO 1: tela limpa (sem mensagens)
@@ -165,26 +243,26 @@ export default function TextPortalPage() {
   if (!hasMessages) {
     return (
       <div className="min-h-screen w-full bg-background text-foreground">
-        <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-5xl flex-col px-4 py-6 sm:px-6 lg:px-8 gap-6">
+        <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-5xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
           <TextHeader />
 
           {/* título central */}
-          <section className="flex flex-col items-center text-center gap-2 mt-4">
-            <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-primary">
+          <section className="mt-4 flex flex-col items-center gap-2 text-center">
+            <h1 className="text-3xl font-semibold tracking-tight text-primary sm:text-4xl">
               Olá, robson.
             </h1>
           </section>
 
-          {/* card com glow no meio (NÃO MEXEMOS) */}
+          {/* card com glow no meio */}
           <section className="mt-6 w-full max-w-3xl self-center">
-            <div className="rounded-[2.5rem] border border-border/60 bg-card/90 px-4 py-4 sm:px-6 sm:py-5 shadow-[0_0_40px_rgba(168,85,247,0.25)]">
-              <div className="mb-3 flex items-center justify-between gap-3 text-xs sm:text-sm text-muted-foreground">
+            <div className="rounded-[2.5rem] border border-border/60 bg-card/90 px-4 py-4 shadow-[0_0_40px_rgba(168,85,247,0.25)] sm:px-6 sm:py-5">
+              <div className="mb-3 flex items-center justify-between gap-3 text-xs text-muted-foreground sm:text-sm">
                 <span>Peça ao IA.HIVE</span>
 
                 <button
                   type="button"
                   onClick={() => setPickerOpen(true)}
-                  className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/80 px-3 py-1.5 text-xs sm:text-sm hover:bg-background"
+                  className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/80 px-3 py-1.5 text-xs hover:bg-background sm:text-sm"
                 >
                   <span className="relative h-5 w-5 overflow-hidden rounded-full bg-card">
                     <Image
@@ -207,16 +285,18 @@ export default function TextPortalPage() {
                     setSelectedModel({
                       id,
                       label: found?.name ?? id,
+                      logoSrc: undefined,
                     });
                     setPickerOpen(false);
                   }}
-                  models={TEXT_MODELS}
+                  models={modelsWithBadges}
                 />
               </div>
 
               <TextBox
                 placeholder="Digite sua mensagem…"
                 onSubmit={handleSend}
+                onFileChange={setAttachedFile}
                 ctaIcon={<Send className="h-4 w-4" />}
               />
             </div>
@@ -233,16 +313,15 @@ export default function TextPortalPage() {
 
   /* ─────────────────────────────
      ESTADO 2: com mensagens
-     (card fixo embaixo, só mensagens rolam)
      ───────────────────────────── */
   return (
     <div className="min-h-screen w-full bg-background text-foreground">
-      <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-5xl flex-col px-4 py-6 sm:px-6 lg:px-8 gap-4">
+      <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-5xl flex-col gap-4 px-4 py-6 sm:px-6 lg:px-8">
         <TextHeader />
 
         {/* título */}
-        <section className="flex flex-col items-center text-center gap-1 mt-2">
-          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-primary">
+        <section className="mt-2 flex flex-col items-center gap-1 text-center">
+          <h1 className="text-2xl font-semibold tracking-tight text-primary sm:text-3xl">
             Olá, robson.
           </h1>
         </section>
@@ -255,16 +334,16 @@ export default function TextPortalPage() {
           <div ref={bottomRef} />
         </section>
 
-        {/* card fixo próximo ao rodapé (NÃO MEXEMOS) */}
+        {/* card fixo próximo ao rodapé */}
         <section className="w-full max-w-3xl self-center pb-2">
-          <div className="rounded-[2.5rem] border border-border/60 bg-card/90 px-4 py-4 sm:px-6 sm:py-5 shadow-[0_0_40px_rgba(168,85,247,0.25)]">
-            <div className="mb-3 flex items-center justify-between gap-3 text-xs sm:text-sm text-muted-foreground">
+          <div className="rounded-[2.5rem] border border-border/60 bg-card/90 px-4 py-4 shadow-[0_0_40px_rgba(168,85,247,0.25)] sm:px-6 sm:py-5">
+            <div className="mb-3 flex items-center justify-between gap-3 text-xs text-muted-foreground sm:text-sm">
               <span>Peça ao IA.HIVE</span>
 
               <button
                 type="button"
                 onClick={() => setPickerOpen(true)}
-                className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/80 px-3 py-1.5 text-xs sm:text-sm hover:bg-background"
+                className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/80 px-3 py-1.5 text-xs hover:bg-background sm:text-sm"
               >
                 <span className="relative h-5 w-5 overflow-hidden rounded-full bg-card">
                   <Image
@@ -287,16 +366,18 @@ export default function TextPortalPage() {
                   setSelectedModel({
                     id,
                     label: found?.name ?? id,
+                    logoSrc: undefined,
                   });
                   setPickerOpen(false);
                 }}
-                models={TEXT_MODELS}
+                models={modelsWithBadges}
               />
             </div>
 
             <TextBox
               placeholder="Digite sua mensagem…"
               onSubmit={handleSend}
+              onFileChange={setAttachedFile}
               ctaIcon={<Send className="h-4 w-4" />}
             />
           </div>
