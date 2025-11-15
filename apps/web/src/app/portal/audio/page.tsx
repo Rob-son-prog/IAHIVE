@@ -6,6 +6,7 @@ import { ArrowLeft, Play, Download, Sparkles } from "lucide-react";
 
 import CreditBar from "@/components/portal/CreditBar";
 import { userMock } from "@/data/portal-mock";
+import ImageLoading from "@/components/loading/ImageLoading"; // ⬅️ ADICIONADO
 
 type AudioProvider = "elevenlabs" | "openai" | "google";
 
@@ -460,7 +461,8 @@ export default function AudioPortalPage() {
               </div>
             </div>
 
-            {!hasAudios && (
+            {/* Estado vazio: nenhum áudio e não está gerando */}
+            {!hasAudios && !isGenerating && (
               <div className="flex flex-1 flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-slate-700 bg-slate-950/80 px-4 py-8 text-center">
                 <div className="flex h-11 w-11 items-center justify-center rounded-full bg-purple-500/10 text-purple-300 ring-1 ring-purple-500/40">
                   <Sparkles className="h-5 w-5" />
@@ -478,8 +480,25 @@ export default function AudioPortalPage() {
               </div>
             )}
 
+            {/* Primeiro áudio sendo gerado (sem histórico ainda) */}
+            {!hasAudios && isGenerating && (
+              <div className="flex flex-1 items-center justify-center">
+                <div className="w-full rounded-xl border border-slate-800 bg-slate-950/80 p-6">
+                  <ImageLoading />
+                </div>
+              </div>
+            )}
+
+            {/* Já tem histórico de áudios */}
             {hasAudios && (
               <div className="flex-1 space-y-3 overflow-y-auto pr-1 pt-1">
+                {/* Spinner no topo da lista enquanto gera novo áudio */}
+                {isGenerating && (
+                  <div className="rounded-xl border border-slate-800 bg-slate-950/80 p-4">
+                    <ImageLoading />
+                  </div>
+                )}
+
                 {audios.map((audio) => {
                   const model = AUDIO_MODELS.find(
                     (m) => m.id === audio.modelId

@@ -5,15 +5,14 @@ import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
 import { ArrowLeft, Send } from "lucide-react";
 
-import ModelPicker, {
-  ModelInfo,
-} from "../../../components/portal/ModelPicker";
+import ModelPicker, { ModelInfo } from "../../../components/portal/ModelPicker";
 import TextBox from "../../../components/portal/TextBox";
 import MessageBubble from "@/components/MessageBubble";
 import CreditBar from "../../../components/portal/CreditBar";
 import { userMock } from "../../../data/portal-mock";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import ImageLoading from "../../../components/loading/ImageLoading"; // ⬅️ IMPORTADO
 
 type Msg = {
   id: string;
@@ -29,55 +28,21 @@ type SelectedModel = {
 
 // modelos de TEXTO
 const TEXT_MODELS: ModelInfo[] = [
-  {
-    id: "gpt-4o",
-    name: "OpenAI GPT-4o",
-    subtitle: "Equilíbrio entre qualidade e custo",
-  },
-  {
-    id: "gpt-5",
-    name: "OpenAI GPT-5",
-    subtitle: "Máxima capacidade e qualidade",
-  },
-  {
-    id: "claude-3-opus",
-    name: "Anthropic (Claude 3 Opus)",
-    subtitle: "Raciocínio avançado e consistente",
-  },
-  {
-    id: "gemini-1.5-pro",
-    name: "Google (Gemini 1.5 Pro)",
-    subtitle: "Contexto longo e boa integração com Google",
-  },
-  {
-    id: "mistral-large",
-    name: "Mistral Large",
-    subtitle: "Modelo europeu, rápido e eficiente",
-  },
-  {
-    id: "groq-llama3",
-    name: "Groq (Llama 3)",
-    subtitle: "Baixa latência com hardware Groq",
-  },
-  {
-    id: "cohere-command-r-plus",
-    name: "Cohere (Command R+)",
-    subtitle: "Focado em tarefas corporativas e RAG",
-  },
-  {
-    id: "perplexity-pplx-online",
-    name: "Perplexity (pplx-online)",
-    subtitle: "Busca em tempo real combinada com IA",
-  },
+  { id: "gpt-4o", name: "OpenAI GPT-4o", subtitle: "Equilíbrio entre qualidade e custo" },
+  { id: "gpt-5", name: "OpenAI GPT-5", subtitle: "Máxima capacidade e qualidade" },
+  { id: "claude-3-opus", name: "Anthropic (Claude 3 Opus)", subtitle: "Raciocínio avançado e consistente" },
+  { id: "gemini-1.5-pro", name: "Google (Gemini 1.5 Pro)", subtitle: "Contexto longo e boa integração com Google" },
+  { id: "mistral-large", name: "Mistral Large", subtitle: "Modelo europeu, rápido e eficiente" },
+  { id: "groq-llama3", name: "Groq (Llama 3)", subtitle: "Baixa latência com hardware Groq" },
+  { id: "cohere-command-r-plus", name: "Cohere (Command R+)", subtitle: "Focado em tarefas corporativas e RAG" },
+  { id: "perplexity-pplx-online", name: "Perplexity (pplx-online)", subtitle: "Busca em tempo real combinada com IA" },
 ];
 
-/// cabeçalho reaproveitado nos dois estados
 function TextHeader() {
   return (
     <header className="mt-4 w-full">
       <div className="mx-auto w-full max-w-5xl">
         <div className="flex flex-col gap-3">
-          {/* Botão Voltar, pequeno e minimalista */}
           <div className="flex justify-start">
             <Link href="/portal">
               <Button
@@ -90,20 +55,12 @@ function TextHeader() {
             </Link>
           </div>
 
-          {/* Barra de créditos abaixo do botão */}
-          <CreditBar
-            credits={userMock.credits}
-            usageThisMonth={userMock.usageThisMonth}
-          />
+          <CreditBar credits={userMock.credits} usageThisMonth={userMock.usageThisMonth} />
         </div>
       </div>
     </header>
   );
 }
-
-/* ────────────────────────────────────────────────
-   Funções leves de recomendação de modelo
-   ──────────────────────────────────────────────── */
 
 type PromptAnalysis = {
   code: boolean;
@@ -113,11 +70,8 @@ type PromptAnalysis = {
 
 function analyzePrompt(text: string): PromptAnalysis {
   const t = text.toLowerCase();
-
   const codeLike =
-    /function\s|\bconst\s|\blet\s|\bclass\s|=>|<\/?[a-z]+>|import\s.+from\s+['"]/.test(
-      text
-    );
+    /function\s|\bconst\s|\blet\s|\bclass\s|=>|<\/?[a-z]+>|import\s.+from\s+['"]/.test(text);
 
   const longContext = text.length > 2000;
   const webSearch =
@@ -125,11 +79,7 @@ function analyzePrompt(text: string): PromptAnalysis {
       t
     );
 
-  return {
-    code: codeLike,
-    longContext,
-    webSearch,
-  };
+  return { code: codeLike, longContext, webSearch };
 }
 
 function getRecommendedModels(lastPrompt: string | null): Set<string> {
@@ -166,6 +116,7 @@ function getRecommendedModels(lastPrompt: string | null): Set<string> {
 
 export default function TextPortalPage() {
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [loading, setLoading] = useState(false); // ⬅️ NOVO ESTADO
 
   const [selectedModel, setSelectedModel] = useState<SelectedModel>({
     id: TEXT_MODELS[0].id,
@@ -174,13 +125,9 @@ export default function TextPortalPage() {
 
   const [messages, setMessages] = useState<Msg[]>([]);
   const [lastPrompt, setLastPrompt] = useState<string | null>(null);
-
-  // arquivo anexado (front)
   const [attachedFile, setAttachedFile] = useState<File | null>(null);
-
   const hasMessages = messages.length > 0;
 
-  // ref para auto-scroll das mensagens
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -193,13 +140,6 @@ export default function TextPortalPage() {
 
     setLastPrompt(trimmed);
 
-    // Aqui será trocado por chamada pro backend
-    console.log("Payload para backend:", {
-      prompt: trimmed,
-      modelId: selectedModel.id,
-      file: attachedFile,
-    });
-
     const userMsg: Msg = {
       id: crypto.randomUUID(),
       role: "user",
@@ -207,16 +147,22 @@ export default function TextPortalPage() {
     };
     setMessages((prev) => [...prev, userMsg]);
 
+    // ⬇️ INÍCIO DO LOADING
+    setLoading(true);
+
     const modelName = selectedModel?.label || selectedModel?.id || "Modelo";
 
     setTimeout(() => {
       const mock: Msg = {
         id: crypto.randomUUID(),
         role: "assistant",
-        content: `Esta é uma resposta simulada do ${modelName}. Em breve conectaremos ao backend para gerar respostas reais com o modelo selecionado.`,
+        content: `Esta é uma resposta simulada do ${modelName}. Em breve conectaremos ao backend.`,
       };
+
       setMessages((prev) => [...prev, mock]);
-    }, 450);
+
+      setLoading(false); // ⬅️ FIM DO LOADING
+    }, 650);
   };
 
   const recommendedIds = React.useMemo(
@@ -246,66 +192,73 @@ export default function TextPortalPage() {
         <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-5xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
           <TextHeader />
 
-          {/* título central (somente sem mensagens) */}
           <section className="mt-4 flex flex-col items-center gap-2 text-center">
             <h1 className="text-3xl font-semibold tracking-tight text-primary sm:text-4xl">
               Olá, robson.
             </h1>
           </section>
 
-          {/* card com glow no meio */}
-          <section className="mt-6 w-full max-w-3xl self-center">
-            <div className="rounded-[2.5rem] border border-border/60 bg-card/90 px-4 py-4 shadow-[0_0_40px_rgba(168,85,247,0.25)] sm:px-6 sm:py-5">
-              <div className="mb-3 flex items-center justify-between gap-3 text-xs text-muted-foreground sm:text-sm">
-                <span>Peça ao IA.HIVE</span>
+          {/* Enquanto estiver carregando (no envio inicial), mostra LOADING */}
+          {loading && (
+            <div className="mt-6 rounded-2xl border border-border bg-card/80 p-8">
+              <ImageLoading />
+            </div>
+          )}
 
-                <button
-                  type="button"
-                  onClick={() => setPickerOpen(true)}
-                  className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/80 px-3 py-1.5 text-xs hover:bg-background sm:text-sm"
-                >
-                  <span className="relative h-5 w-5 overflow-hidden rounded-full bg-card">
-                    <Image
-                      src={resolvedLogo}
-                      alt={selectedModel.label}
-                      fill
-                      className="object-contain"
-                    />
-                  </span>
-                  <span className="font-medium">{selectedModel.label}</span>
-                  <span className="text-[10px] text-muted-foreground">▼</span>
-                </button>
+          {!loading && (
+            <section className="mt-6 w-full max-w-3xl self-center">
+              <div className="rounded-[2.5rem] border border-border/60 bg-card/90 px-4 py-4 shadow-[0_0_40px_rgba(168,85,247,0.25)] sm:px-6 sm:py-5">
+                <div className="mb-3 flex items-center justify-between gap-3 text-xs text-muted-foreground sm:text-sm">
+                  <span>Peça ao IA.HIVE</span>
 
-                <ModelPicker
-                  open={pickerOpen}
-                  value={selectedModel.id}
-                  onClose={() => setPickerOpen(false)}
-                  onSelect={(id: string) => {
-                    const found = TEXT_MODELS.find((m) => m.id === id);
-                    setSelectedModel({
-                      id,
-                      label: found?.name ?? id,
-                      logoSrc: undefined,
-                    });
-                    setPickerOpen(false);
-                  }}
-                  models={modelsWithBadges}
+                  <button
+                    type="button"
+                    onClick={() => setPickerOpen(true)}
+                    className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/80 px-3 py-1.5 text-xs hover:bg-background sm:text-sm"
+                  >
+                    <span className="relative h-5 w-5 overflow-hidden rounded-full bg-card">
+                      <Image
+                        src={resolvedLogo}
+                        alt={selectedModel.label}
+                        fill
+                        className="object-contain"
+                      />
+                    </span>
+                    <span className="font-medium">{selectedModel.label}</span>
+                    <span className="text-[10px] text-muted-foreground">▼</span>
+                  </button>
+
+                  <ModelPicker
+                    open={pickerOpen}
+                    value={selectedModel.id}
+                    onClose={() => setPickerOpen(false)}
+                    onSelect={(id: string) => {
+                      const found = TEXT_MODELS.find((m) => m.id === id);
+                      setSelectedModel({
+                        id,
+                        label: found?.name ?? id,
+                        logoSrc: undefined,
+                      });
+                      setPickerOpen(false);
+                    }}
+                    models={modelsWithBadges}
+                  />
+                </div>
+
+                <TextBox
+                  placeholder="Digite sua mensagem…"
+                  onSubmit={handleSend}
+                  onFileChange={setAttachedFile}
+                  ctaIcon={<Send className="h-4 w-4" />}
                 />
               </div>
 
-              <TextBox
-                placeholder="Digite sua mensagem…"
-                onSubmit={handleSend}
-                onFileChange={setAttachedFile}
-                ctaIcon={<Send className="h-4 w-4" />}
-              />
-            </div>
-
-            <p className="mt-3 text-center text-xs text-muted-foreground">
-              O IA.HIVE pode cometer erros. Revise as respostas. Use Enter para
-              enviar e Shift + Enter para quebrar a linha.
-            </p>
-          </section>
+              <p className="mt-3 text-center text-xs text-muted-foreground">
+                O IA.HIVE pode cometer erros. Revise as respostas. Use Enter para
+                enviar e Shift + Enter para quebrar a linha.
+              </p>
+            </section>
+          )}
         </main>
       </div>
     );
@@ -319,17 +272,23 @@ export default function TextPortalPage() {
       <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-5xl flex-col gap-4 px-4 py-6 sm:px-6 lg:px-8">
         <TextHeader />
 
-        {/* PERCEBA: sem título aqui, pra não repetir "Olá, robson." enquanto conversa */}
-
-        {/* mensagens: área rolável */}
+        {/* LISTA DE MENSAGENS */}
         <section className="mt-2 flex-1 space-y-3 overflow-y-auto pr-1">
           {messages.map((m) => (
             <MessageBubble key={m.id} role={m.role} content={m.content} />
           ))}
+
+          {/* ⬅️ Spinner no final da conversa durante carregamento */}
+          {loading && (
+            <div className="w-full rounded-xl border border-border bg-card/50 p-4">
+              <ImageLoading />
+            </div>
+          )}
+
           <div ref={bottomRef} />
         </section>
 
-        {/* card fixo próximo ao rodapé */}
+        {/* CAIXA DE ENVIO */}
         <section className="w-full max-w-3xl self-center pb-2">
           <div className="rounded-[2.5rem] border border-border/60 bg-card/90 px-4 py-4 shadow-[0_0_40px_rgba(168,85,247,0.25)] sm:px-6 sm:py-5">
             <div className="mb-3 flex items-center justify-between gap-3 text-xs text-muted-foreground sm:text-sm">

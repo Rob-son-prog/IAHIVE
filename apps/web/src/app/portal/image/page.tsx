@@ -11,6 +11,7 @@ import ModelPicker, {
   MODEL_LOGOS,
   MODEL_ALTS,
 } from "../../../components/portal/ModelPicker";
+import ImageLoading from "../../../components/loading/ImageLoading";
 
 type Img = { id: string; url: string; w: number; h: number };
 
@@ -227,30 +228,44 @@ export default function ImagePage() {
         />
       </div>
 
-      {/* Grid */}
+      {/* Grid / Área de resultado */}
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {images.map((img) => (
-          <figure key={img.id} className="overflow-hidden rounded-2xl border border-border bg-card dark:bg-neutral-900/40">
-            <div
-              className="w-full"
-              style={{
-                aspectRatio: `${img.w} / ${img.h}`,
-                backgroundImage: `url(${img.url})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}
-            />
-            <figcaption className="flex items-center justify-between px-3 py-2 text-[11px] text-muted-foreground">
-              <span>
-                {img.w}×{img.h} · {quality.toUpperCase()}
-              </span>
-              <button className="rounded-lg border border-border px-2 py-1 text-slate-700 hover:bg-slate-50 dark:text-neutral-200 dark:hover:bg-white/5">
-                Baixar
-              </button>
-            </figcaption>
-          </figure>
-        ))}
-        {images.length === 0 && (
+        {/* Quando estiver carregando, mostra o spinner com a logo */}
+        {loading && (
+          <div className="col-span-full rounded-2xl border border-border bg-card/70 p-6 dark:border-neutral-800 dark:bg-neutral-950/60">
+            <ImageLoading />
+          </div>
+        )}
+
+        {/* Quando NÃO estiver carregando, mostra as imagens normalmente */}
+        {!loading &&
+          images.map((img) => (
+            <figure
+              key={img.id}
+              className="overflow-hidden rounded-2xl border border-border bg-card dark:bg-neutral-900/40"
+            >
+              <div
+                className="w-full"
+                style={{
+                  aspectRatio: `${img.w} / ${img.h}`,
+                  backgroundImage: `url(${img.url})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
+              />
+              <figcaption className="flex items-center justify-between px-3 py-2 text-[11px] text-muted-foreground">
+                <span>
+                  {img.w}×{img.h} · {quality.toUpperCase()}
+                </span>
+                <button className="rounded-lg border border-border px-2 py-1 text-slate-700 hover:bg-slate-50 dark:text-neutral-200 dark:hover:bg-white/5">
+                  Baixar
+                </button>
+              </figcaption>
+            </figure>
+          ))}
+
+        {/* Placeholder padrão quando não tem imagem e não está carregando */}
+        {!loading && images.length === 0 && (
           <div className="col-span-full rounded-2xl border border-border bg-card/70 p-6 text-sm text-muted-foreground dark:border-neutral-800 dark:bg-neutral-950/60">
             As imagens geradas aparecerão aqui.
           </div>
