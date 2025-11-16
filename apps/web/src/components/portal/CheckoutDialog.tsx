@@ -201,6 +201,22 @@ export default function CheckoutDialog({ open, onOpenChange, amount }: CheckoutD
             </RTabs.Content>
           </RTabs.Root>
         </div>
+
+        {/* 🔻 NOVO RODAPÉ: garantia, reembolso e histórico (texto bem pequeno) */}
+        <div className="mt-3 text-[10px] leading-relaxed text-muted-foreground">
+          <p>
+            Pagamentos processados com segurança via Mercado Pago. Seus créditos são liberados
+            automaticamente após a confirmação do pagamento.
+          </p>
+          <p className="mt-1">
+            Reembolso disponível em até 7 dias, desde que os créditos não tenham sido utilizados.
+            Em caso de falha na recarga, o saldo será ajustado automaticamente pela equipe IA.HIVE.
+          </p>
+          <p className="mt-1">
+            Em breve você terá acesso a um histórico detalhado de recargas e consumo de créditos na
+            área <span className="font-medium">Créditos</span> do portal.
+          </p>
+        </div>
       </DialogContent>
     </Dialog>
   );
